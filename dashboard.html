@@ -1,5 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+// dashboard.html
+document.addEventListener('DOMContentLoaded', function() {
+    if (!checkAuth()) {
+        window.location.href = 'login.html';
+        return;
+    }
+    
+    // Rest of your dashboard code...
+});
 <nav>
     <a href="index.html">Home</a>
     <a href="matches.html">Matches</a>
