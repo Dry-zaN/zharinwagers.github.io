@@ -116,34 +116,58 @@ function setupRegisterForm() {
     });
 }
 
-// Login function
+// auth.js
 function login(username, password) {
+    // Get users from localStorage
+    const users = JSON.parse(localStorage.getItem('apexWagerUsers')) || [];
+    
+    // Find user by username or email
     const user = users.find(u => u.username === username || u.email === username);
     
     if (!user) {
-        alert('User not found');
+        showAlert('error', 'User not found');
         return false;
     }
     
+    // Verify password (using our simple client-side hash)
     if (user.password !== hashPassword(password)) {
-        alert('Incorrect password');
+        showAlert('error', 'Incorrect password');
         return false;
     }
     
-    // Generate auth token
+    // Create auth token
     const authToken = generateAuthToken(user.id);
     localStorage.setItem('apexWagerAuthToken', authToken);
     
-    // Set current user
+    // Update current user
     window.currentUser = user;
-    
-    // Update UI
     updateUIForAuth(true);
     
     // Redirect to dashboard
     window.location.href = 'dashboard.html';
     
     return true;
+}
+
+// Helper function to show alerts
+function showAlert(type, message) {
+    const alertBox = document.createElement('div');
+    alertBox.className = `alert alert-${type}`;
+    alertBox.textContent = message;
+    alertBox.style.position = 'fixed';
+    alertBox.style.top = '20px';
+    alertBox.style.right = '20px';
+    alertBox.style.padding = '15px';
+    alertBox.style.backgroundColor = type === 'error' ? '#ff4655' : '#4caf50';
+    alertBox.style.color = 'white';
+    alertBox.style.borderRadius = '4px';
+    alertBox.style.zIndex = '1000';
+    
+    document.body.appendChild(alertBox);
+    
+    setTimeout(() => {
+        alertBox.remove();
+    }, 3000);
 }
 
 // Register function
