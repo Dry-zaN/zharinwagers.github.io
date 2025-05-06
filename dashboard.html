@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Apex Wager</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="logo">APEX WAGER</div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="matches.html">Matches</a>
+            <a href="#" class="user-balance">$0.00</a>
+            <a href="#" class="logout-btn">Logout</a>
+        </nav>
+    </header>
+    
+    <main class="dashboard">
+        <section class="balance-section">
+            <h2>Your Balance: <span id="user-balance">$0.00</span></h2>
+            <div class="balance-actions">
+                <button id="deposit-btn" class="btn primary">Deposit</button>
+                <button id="withdraw-btn" class="btn secondary">Withdraw</button>
+            </div>
+        </section>
+        
+        <section class="active-wagers">
+            <h2>Your Active Wagers</h2>
+            <div class="wager-list" id="active-wagers">
+                <!-- Will be populated by JS -->
+                <div class="empty-state">No active wagers</div>
+            </div>
+        </section>
+        
+        <section class="match-history">
+            <h2>Match History</h2>
+            <div class="history-list" id="match-history">
+                <!-- Will be populated by JS -->
+                <div class="empty-state">No match history</div>
+            </div>
+        </section>
+    </main>
+    
+    <div id="deposit-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Deposit Funds</h3>
+            <div class="deposit-options">
+                <button class="deposit-amount" data-amount="10">$10</button>
+                <button class="deposit-amount" data-amount="25">$25</button>
+                <button class="deposit-amount" data-amount="50">$50</button>
+                <button class="deposit-amount" data-amount="100">$100</button>
+            </div>
+            <div class="custom-amount">
+                <input type="number" id="custom-amount" placeholder="Custom amount">
+                <button id="custom-deposit" class="btn primary">Deposit</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
