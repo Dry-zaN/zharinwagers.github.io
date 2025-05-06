@@ -1,38 +1,59 @@
 // auth.js - Client-side authentication system
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if user is already logged in
+    // Initialize demo user if none exists
+    const users = JSON.parse(localStorage.getItem('apexWagerUsers')) || [];
+    if (users.length === 0) {
+        const demoUser = {
+            id: 1,
+            username: 'demo',
+            email: 'demo@apexwager.com',
+            password: hashPassword('demo123'),
+            balance: 1000,
+            createdAt: new Date().toISOString(),
+            wagers: []
+        };
+        users.push(demoUser);
+        localStorage.setItem('apexWagerUsers', JSON.stringify(users));
+    }
+
+    // Check auth status
     checkAuth();
-    
-    // Set up login/logout buttons
     setupAuthButtons();
     
-    // If we're on the login page, set up the form
-    if (document.getElementById('login-form')) {
-        setupLoginForm();
+    // Setup login form if exists
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = loginForm.elements['username'].value;
+            const password = loginForm.elements['password'].value;
+            login(username, password);
+        });
     }
     
-    // If we're on the register page, set up the form
-    if (document.getElementById('register-form')) {
-        setupRegisterForm();
+    // Setup register form if exists
+    const registerForm = document.getElementById('register-form');
+    if (registerForm) {
+        registerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = registerForm.elements['username'].value;
+            const email = registerForm.elements['email'].value;
+            const password = registerForm.elements['password'].value;
+            const confirmPassword = registerForm.elements['confirmPassword'].value;
+            
+            if (password !== confirmPassword) {
+                showAlert('error', 'Passwords do not match');
+                return;
+            }
+            
+            register(username, email, password);
+        });
     }
 });
 
-// Simulated database
-const users = JSON.parse(localStorage.getItem('apexWagerUsers')) || [
-    {
-        id: 1,
-        username: 'demo',
-        email: 'demo@apexwager.com',
-        password: hashPassword('demo123'), // Hashed password
-        balance: 1000,
-        createdAt: new Date().toISOString(),
-        wagers: []
-    }
-];
-
-// Password hashing function (simplified for client-side)
+// Password hashing
 function hashPassword(password) {
-    return btoa(password + 'apex-wager-salt'); // Base64 encoding with salt
+    return btoa(password + 'apex-wager-salt');
 }
 
 // Check authentication status
@@ -40,15 +61,17 @@ function checkAuth() {
     const authToken = localStorage.getItem('apexWagerAuthToken');
     if (authToken) {
         try {
-            const userData = JSON.parse(atob(authToken.split('.')[1]));
-            const user = users.find(u => u.id === userData.userId);
+            const payload = JSON.parse(atob(authToken.split('.')[1]));
+            const users = JSON.parse(localStorage.getItem('apexWagerUsers')) || [];
+            const user = users.find(u => u.id === payload.userId);
+            
             if (user) {
                 window.currentUser = user;
                 updateUIForAuth(true);
                 return true;
             }
         } catch (e) {
-            console.error('Invalid auth token', e);
+            console.error('Invalid token', e);
         }
     }
     updateUIForAuth(false);
@@ -62,66 +85,9 @@ function generateAuthToken(userId) {
     return `${btoa(JSON.stringify(header))}.${btoa(JSON.stringify(payload))}.${btoa('simulated-signature')}`;
 }
 
-// Setup auth buttons
-function setupAuthButtons() {
-    // Login button (if exists)
-    const loginBtn = document.querySelector('.login-btn');
-    if (loginBtn) {
-        loginBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            window.location.href = 'login.html';
-        });
-    }
-    
-    // Logout button (if exists)
-    const logoutBtn = document.querySelector('.logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            logout();
-        });
-    }
-}
-
-// Setup login form
-function setupLoginForm() {
-    const form = document.getElementById('login-form');
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const username = form.elements['username'].value;
-        const password = form.elements['password'].value;
-        
-        login(username, password);
-    });
-}
-
-// Setup register form
-function setupRegisterForm() {
-    const form = document.getElementById('register-form');
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const username = form.elements['username'].value;
-        const email = form.elements['email'].value;
-        const password = form.elements['password'].value;
-        const confirmPassword = form.elements['confirmPassword'].value;
-        
-        if (password !== confirmPassword) {
-            alert('Passwords do not match!');
-            return;
-        }
-        
-        register(username, email, password);
-    });
-}
-
-// auth.js
+// Login function
 function login(username, password) {
-    // Get users from localStorage
     const users = JSON.parse(localStorage.getItem('apexWagerUsers')) || [];
-    
-    // Find user by username or email
     const user = users.find(u => u.username === username || u.email === username);
     
     if (!user) {
@@ -129,61 +95,33 @@ function login(username, password) {
         return false;
     }
     
-    // Verify password (using our simple client-side hash)
     if (user.password !== hashPassword(password)) {
         showAlert('error', 'Incorrect password');
         return false;
     }
     
-    // Create auth token
     const authToken = generateAuthToken(user.id);
     localStorage.setItem('apexWagerAuthToken', authToken);
-    
-    // Update current user
     window.currentUser = user;
     updateUIForAuth(true);
-    
-    // Redirect to dashboard
     window.location.href = 'dashboard.html';
-    
     return true;
-}
-
-// Helper function to show alerts
-function showAlert(type, message) {
-    const alertBox = document.createElement('div');
-    alertBox.className = `alert alert-${type}`;
-    alertBox.textContent = message;
-    alertBox.style.position = 'fixed';
-    alertBox.style.top = '20px';
-    alertBox.style.right = '20px';
-    alertBox.style.padding = '15px';
-    alertBox.style.backgroundColor = type === 'error' ? '#ff4655' : '#4caf50';
-    alertBox.style.color = 'white';
-    alertBox.style.borderRadius = '4px';
-    alertBox.style.zIndex = '1000';
-    
-    document.body.appendChild(alertBox);
-    
-    setTimeout(() => {
-        alertBox.remove();
-    }, 3000);
 }
 
 // Register function
 function register(username, email, password) {
-    // Check if username or email already exists
+    const users = JSON.parse(localStorage.getItem('apexWagerUsers')) || [];
+    
     if (users.some(u => u.username === username)) {
-        alert('Username already exists');
+        showAlert('error', 'Username already exists');
         return false;
     }
     
     if (users.some(u => u.email === email)) {
-        alert('Email already exists');
+        showAlert('error', 'Email already exists');
         return false;
     }
     
-    // Create new user
     const newUser = {
         id: users.length + 1,
         username,
@@ -196,10 +134,7 @@ function register(username, email, password) {
     
     users.push(newUser);
     localStorage.setItem('apexWagerUsers', JSON.stringify(users));
-    
-    // Automatically log in the new user
     login(username, password);
-    
     return true;
 }
 
@@ -213,29 +148,33 @@ function logout() {
 
 // Update UI based on auth status
 function updateUIForAuth(isAuthenticated) {
-    // Show/hide auth buttons
-    const loginButtons = document.querySelectorAll('.login-btn');
-    const logoutButtons = document.querySelectorAll('.logout-btn');
-    const authOnlyElements = document.querySelectorAll('.auth-only');
-    const unauthOnlyElements = document.querySelectorAll('.unauth-only');
+    document.body.classList.toggle('authenticated', isAuthenticated);
     
-    loginButtons.forEach(btn => btn.style.display = isAuthenticated ? 'none' : 'block');
-    logoutButtons.forEach(btn => btn.style.display = isAuthenticated ? 'block' : 'none');
-    
-    authOnlyElements.forEach(el => el.style.display = isAuthenticated ? 'block' : 'none');
-    unauthOnlyElements.forEach(el => el.style.display = isAuthenticated ? 'none' : 'block');
-    
-    // Update user info if logged in
     if (isAuthenticated && currentUser) {
-        const userBalanceElements = document.querySelectorAll('.user-balance');
-        const usernameElements = document.querySelectorAll('.username-display');
-        
-        userBalanceElements.forEach(el => {
+        document.querySelectorAll('.user-balance').forEach(el => {
             el.textContent = `$${currentUser.balance.toFixed(2)}`;
         });
-        
-        usernameElements.forEach(el => {
-            el.textContent = currentUser.username;
-        });
     }
+}
+
+// Show alert message
+function showAlert(type, message) {
+    const alertBox = document.createElement('div');
+    alertBox.className = `alert alert-${type}`;
+    alertBox.textContent = message;
+    document.body.appendChild(alertBox);
+    
+    setTimeout(() => {
+        alertBox.remove();
+    }, 3000);
+}
+
+// Setup auth buttons
+function setupAuthButtons() {
+    document.querySelectorAll('.logout-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            logout();
+        });
+    });
 }

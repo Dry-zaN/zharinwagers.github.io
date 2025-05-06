@@ -1,320 +1,164 @@
 /* Base Styles */
 :root {
-    --primary: #ff4655; /* Apex red */
-    --secondary: #0f1923; /* Apex dark blue */
-    --accent: #ece8e1; /* Apex light */
-    --text: #333;
-    --light-text: #fff;
-    --success: #4caf50;
-    --warning: #ff9800;
-    --error: #f44336;
+    --apex-red: #ff4655;
+    --apex-dark: #0f1923;
+    --apex-light: #ece8e1;
+    --apex-gold: #d0a85c;
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Titillium Web', sans-serif;
 }
 
 body {
-    background-color: #f5f5f5;
-    color: var(--text);
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--apex-dark);
+    color: var(--apex-light);
+    line-height: 1.6;
+    background-image: url('https://media.contentapi.ea.com/content/dam/apex-legends/images/2019/01/apex-featured-image-16x9.jpg.adapt.crop191x100.1200w.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(15, 25, 35, 0.85);
+    z-index: -1;
 }
 
 header {
-    background-color: var(--secondary);
-    color: var(--light-text);
+    background-color: rgba(15, 25, 35, 0.9);
     padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-bottom: 2px solid var(--apex-red);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .logo {
-    font-size: 1.5rem;
+    font-family: 'Oswald', sans-serif;
+    font-size: 2rem;
     font-weight: bold;
-    color: var(--primary);
+    color: var(--apex-red);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.logo span {
+    color: var(--apex-light);
 }
 
 nav a {
-    color: var(--light-text);
+    color: var(--apex-light);
     text-decoration: none;
     margin-left: 1.5rem;
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: color 0.3s;
+}
+
+nav a:hover {
+    color: var(--apex-red);
 }
 
 .btn {
     padding: 0.75rem 1.5rem;
     border: none;
     border-radius: 4px;
+    font-family: 'Oswald', sans-serif;
     font-weight: bold;
+    text-transform: uppercase;
     cursor: pointer;
     text-decoration: none;
     display: inline-block;
+    transition: all 0.3s;
 }
 
-.btn.primary {
-    background-color: var(--primary);
-    color: var(--light-text);
-}
-
-.btn.secondary {
-    background-color: transparent;
-    border: 2px solid var(--primary);
-    color: var(--primary);
-}
-
-/* Hero Section */
-.hero {
-    text-align: center;
-    padding: 4rem 2rem;
-    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('../assets/apex-bg.jpg');
-    background-size: cover;
-    color: var(--light-text);
-}
-
-.hero h1 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
-
-.hero p {
-    font-size: 1.25rem;
-    margin-bottom: 2rem;
-}
-
-.cta-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-}
-
-/* How It Works */
-.how-it-works {
-    padding: 4rem 2rem;
-    text-align: center;
-}
-
-.how-it-works h2 {
-    margin-bottom: 3rem;
-    font-size: 2rem;
-}
-
-.steps {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.step {
-    flex: 1;
-    min-width: 200px;
-    padding: 1.5rem;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-.step-number {
-    width: 40px;
-    height: 40px;
-    background-color: var(--primary);
+.btn-primary {
+    background-color: var(--apex-red);
     color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1rem;
-    font-weight: bold;
 }
 
-/* Dashboard Styles */
-.dashboard {
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
+.btn-primary:hover {
+    background-color: #e63a48;
+    transform: translateY(-2px);
 }
 
-.balance-section {
-    background-color: white;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    margin-bottom: 2rem;
-    text-align: center;
-}
+/* Auth specific styles */
+.auth-only { display: none; }
+.unauth-only { display: block; }
 
-.balance-section h2 {
-    margin-bottom: 1.5rem;
-}
+.authenticated .auth-only { display: block; }
+.authenticated .unauth-only { display: none; }
 
-.balance-actions {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-}
-
-.active-wagers, .match-history {
-    background-color: white;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    margin-bottom: 2rem;
-}
-
-.empty-state {
-    text-align: center;
-    padding: 2rem;
-    color: #666;
-}
-
-/* Matches Page */
-.matches {
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.match-filters {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
-
-.match-filters select {
-    padding: 0.5rem;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-}
-
-.match-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-}
-
-.match-card {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    padding: 1.5rem;
-    transition: transform 0.2s;
-}
-
-.match-card:hover {
-    transform: translateY(-5px);
-}
-
-.match-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-}
-
-.match-prize {
-    font-weight: bold;
-    color: var(--primary);
-}
-
-.match-details {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 1.5rem;
-    color: #666;
-    font-size: 0.9rem;
-}
-
-.join-match {
-    width: 100%;
-}
-
-/* Modal Styles */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 100;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-}
-
-.modal-content {
-    background-color: white;
-    margin: 10% auto;
-    padding: 2rem;
-    border-radius: 8px;
+.auth-container {
     max-width: 500px;
-    position: relative;
+    margin: 4rem auto;
+    padding: 2rem;
+    background-color: rgba(15, 25, 35, 0.9);
+    border-radius: 8px;
+    border-top: 4px solid var(--apex-red);
 }
 
-.close {
-    position: absolute;
-    right: 1rem;
-    top: 1rem;
-    font-size: 1.5rem;
-    cursor: pointer;
-}
-
-.deposit-options {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+.form-group {
     margin-bottom: 1.5rem;
 }
 
-.deposit-amount {
+.form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 4px;
+    color: white;
+}
+
+/* Alert styles */
+.alert {
+    position: fixed;
+    top: 20px;
+    right: 20px;
     padding: 1rem;
-    background-color: #f0f0f0;
-    border: none;
     border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
+    z-index: 1000;
+    animation: slideIn 0.3s ease-out;
 }
 
-.deposit-amount:hover {
-    background-color: #e0e0e0;
+.alert-error {
+    background-color: var(--apex-red);
 }
 
-.custom-amount {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.custom-amount input {
-    flex: 1;
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-/* Team Selection */
-.team-selection {
-    margin: 1.5rem 0;
-}
-
-.team-list {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
-    margin-top: 1rem;
-}
-
-.team-option {
-    padding: 0.5rem;
-    background-color: #f5f5f5;
-    border-radius: 4px;
+@keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .steps {
+    header {
         flex-direction: column;
+        padding: 1rem;
     }
     
-    .match-list {
-        grid-template-columns: 1fr;
+    nav {
+        margin-top: 1rem;
+    }
+    
+    nav a {
+        margin: 0 0.5rem;
     }
 }
